@@ -35,6 +35,7 @@
   <groupId>org.codehaus.mojo</groupId>
   <artifactId>appassembler-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
+  <version>2.1.1</version>
   <name>Appassembler :: Maven Plug-In</name>
   <description>A Mojo for generating bin scripts for Java applications.</description>
 
@@ -135,97 +136,9 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-resources</phase>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>tanukisoft</groupId>
-                  <artifactId>wrapper-delta-pack</artifactId>
-                  <version>3.2.3</version>
-                  <type>tar.gz</type>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>org.sonatype.jsw-binaries</groupId>
-                  <artifactId>jsw-binaries</artifactId>
-                  <version>3.2.3.6</version>
-                  <type>tar.gz</type>
-                  <outputDirectory>${project.build.directory}/dependency/sonatype-jsw-binaries</outputDirectory>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>org.apache.karaf.shell</groupId>
-                  <artifactId>org.apache.karaf.shell.wrapper</artifactId>
-                  <version>2.2.7</version>
-                  <type>jar</type>
-                  <outputDirectory>${project.build.directory}/dependency/karaf-jsw-binaries</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target>
-
-                <copy file="${project.build.directory}/dependency/sonatype-jsw-binaries/windows-x86-64/lib/wrapper.dll" tofile="${project.build.directory}/dependency/wrapper-delta-pack-3.2.3/lib/wrapper-windows-x86-64.dll" />
-                <copy file="${project.build.directory}/dependency/sonatype-jsw-binaries/windows-x86-64/wrapper.exe" tofile="${project.build.directory}/dependency/wrapper-delta-pack-3.2.3/bin/wrapper-windows-x86-64.exe" />
-
-                <copy file="${project.build.directory}/dependency/sonatype-jsw-binaries/macosx-universal-64/lib/libwrapper.jnilib" tofile="${project.build.directory}/dependency/wrapper-delta-pack-3.2.3/lib/libwrapper-macosx-universal-64.jnilib" />
-                <copy file="${project.build.directory}/dependency/sonatype-jsw-binaries/macosx-universal-64/wrapper" tofile="${project.build.directory}/dependency/wrapper-delta-pack-3.2.3/bin/wrapper-macosx-universal-64" />
-
-                <copy file="${project.build.directory}/dependency/karaf-jsw-binaries/org/apache/karaf/shell/wrapper/aix/ppc32/libwrapper.a" tofile="${project.build.directory}/dependency/wrapper-delta-pack-3.2.3/lib/libwrapper-aix-ppc-32.a" />
-                <copy file="${project.build.directory}/dependency/karaf-jsw-binaries/org/apache/karaf/shell/wrapper/aix/ppc32/karaf-wrapper" tofile="${project.build.directory}/dependency/wrapper-delta-pack-3.2.3/bin/wrapper-aix-ppc-32" />
-
-                <copy file="${project.build.directory}/dependency/karaf-jsw-binaries/org/apache/karaf/shell/wrapper/aix/ppc64/libwrapper.a" tofile="${project.build.directory}/dependency/wrapper-delta-pack-3.2.3/lib/libwrapper-aix-ppc-64.a" />
-                <copy file="${project.build.directory}/dependency/karaf-jsw-binaries/org/apache/karaf/shell/wrapper/aix/ppc64/karaf-wrapper" tofile="${project.build.directory}/dependency/wrapper-delta-pack-3.2.3/bin/wrapper-aix-ppc-64" />
-
-                <copy file="${project.build.directory}/dependency/karaf-jsw-binaries/org/apache/karaf/shell/wrapper/hpux/parisc64/libwrapper.sl" tofile="${project.build.directory}/dependency/wrapper-delta-pack-3.2.3/lib/libwrapper-hpux-parisc-64.sl" />
-                <copy file="${project.build.directory}/dependency/karaf-jsw-binaries/org/apache/karaf/shell/wrapper/hpux/parisc64/karaf-wrapper" tofile="${project.build.directory}/dependency/wrapper-delta-pack-3.2.3/bin/wrapper-hpux-parisc-64" />
-
-              </target>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <configuration>
-          <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
-          <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-        </configuration>
-        <executions>
-          <execution>
-            <id>mojo-descriptor</id>
-            <goals>
-              <goal>descriptor</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
 
     <resources>
-      <resource>
-        <directory>target/dependency/wrapper-delta-pack-3.2.3/src/conf</directory>
-        <targetPath>org/codehaus/mojo/appassembler/daemon/jsw/conf</targetPath>
-      </resource>
       <resource>
         <directory>src/main/patches</directory>
         <targetPath>org/codehaus/mojo/appassembler/daemon/jsw/bin</targetPath>
@@ -234,9 +147,8 @@
           <include>AppCommand.bat.in</include>
         </includes>
       </resource>
-      <!-- TODO: Have the plugin copy these in (depending on platforms) -->
       <resource>
-        <directory>target/dependency/wrapper-delta-pack-3.2.3/lib</directory>
+        <directory>src/main/wrapper/lib</directory>
         <targetPath>org/codehaus/mojo/appassembler/daemon/jsw/lib</targetPath>
         <includes>
           <include>wrapper.jar</include>
@@ -244,13 +156,16 @@
           <include>libwrapper-*</include>
         </includes>
       </resource>
-      <!-- TODO: Have the plugin copy these in (depending on platforms) -->
       <resource>
-        <directory>target/dependency/wrapper-delta-pack-3.2.3/bin</directory>
+        <directory>src/main/wrapper/bin</directory>
         <targetPath>org/codehaus/mojo/appassembler/daemon/jsw/bin</targetPath>
         <includes>
           <include>wrapper-*</include>
         </includes>
+      </resource>
+      <resource>
+        <directory>src/main/wrapper/conf</directory>
+        <targetPath>org/codehaus/mojo/appassembler/daemon/jsw/conf</targetPath>
       </resource>
       <resource>
         <directory>src/main/resources</directory>

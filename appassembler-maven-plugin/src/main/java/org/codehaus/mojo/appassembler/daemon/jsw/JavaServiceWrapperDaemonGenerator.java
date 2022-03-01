@@ -69,34 +69,61 @@ public class JavaServiceWrapperDaemonGenerator
     private static final Map<String, String> JSW_PLATFORMS_MAP = new HashMap<String, String>()
     {
         {
-            put( "aix-ppc-32-lib", "libwrapper-aix-ppc-32.a" );
+            put( "aix-ppc-32-lib", "libwrapper-aix-ppc-32.so" );
             put( "aix-ppc-32-exec", "wrapper-aix-ppc-32" );
-            put( "aix-ppc-64-lib", "libwrapper-aix-ppc-64.a" );
+            put( "aix-ppc-64-lib", "libwrapper-aix-ppc-64.so" );
             put( "aix-ppc-64-exec", "wrapper-aix-ppc-64" );
+
+            put( "freebsd-arm-64-lib", "libwrapper-freebsd-arm-64.so" );
+            put( "freebsd-arm-64-exec", "wrapper-freebsd-arm-64" );
+            put( "freebsd-x86-32-lib", "libwrapper-freebsd-x86-32.so" );
+            put( "freebsd-x86-32-exec", "wrapper-freebsd-x86-32" );
+            put( "freebsd-x86-64-lib", "libwrapper-freebsd-x86-64.so" );
+            put( "freebsd-x86-64-exec", "wrapper-freebsd-x86-64" );
+
+            put( "hpux-ia-32-lib", "libwrapper-hpux-ia-32.so" );
+            put( "hpux-ia-32-exec", "wrapper-hpux-ia-32" );
+            put( "hpux-ia-64-lib", "libwrapper-hpux-ia-64.so" );
+            put( "hpux-ia-64-exec", "wrapper-hpux-ia-64" );
+
+            put( "hpux-parisc-32-lib", "libwrapper-hpux-parisc-32.sl" );
+            put( "hpux-parisc-32-exec", "wrapper-hpux-parisc-32" );
             put( "hpux-parisc-64-lib", "libwrapper-hpux-parisc-64.sl" );
             put( "hpux-parisc-64-exec", "wrapper-hpux-parisc-64" );
+
+            put( "linux-arm-64-lib", "libwrapper-linux-arm-64.so" );
+            put( "linux-arm-64-exec", "wrapper-linux-arm-64" );
+
+            put( "linux-armel-32-lib", "libwrapper-linux-armel-32.so" );
+            put( "linux-armel-32-exec", "wrapper-linux-armel-32" );
+            put( "linux-armhf-32-lib", "libwrapper-linux-armhf-32.so" );
+            put( "linux-armhf-32-exec", "wrapper-linux-armhf-32" );
+
+            put( "linux-ppcle-64-lib", "libwrapper-linux-ppcle-64.so" );
+            put( "linux-ppcle-64-exec", "wrapper-linux-ppcle-64" );
+
             put( "linux-x86-32-lib", "libwrapper-linux-x86-32.so" );
             put( "linux-x86-32-exec", "wrapper-linux-x86-32" );
             put( "linux-x86-64-lib", "libwrapper-linux-x86-64.so" );
             put( "linux-x86-64-exec", "wrapper-linux-x86-64" );
-            put( "linux-ppc-64-lib", "libwrapper-linux-ppc-64.so" );
-            put( "linux-ppc-64-exec", "wrapper-linux-ppc-64" );
-            put( "macosx-ppc-32-lib", "libwrapper-macosx-ppc-32.jnilib" );
-            put( "macosx-ppc-32-exec", "wrapper-macosx-ppc-32" );
-            put( "macosx-x86-universal-32-lib", "libwrapper-macosx-universal-32.jnilib" );
-            put( "macosx-x86-universal-32-exec", "wrapper-macosx-universal-32" );
+
+            put( "macosx-arm-64-lib", "libwrapper-macosx-arm-64.dylib" );
+            put( "macosx-arm-64-exec", "wrapper-macosx-arm-64" );
             put( "macosx-universal-32-lib", "libwrapper-macosx-universal-32.jnilib" );
             put( "macosx-universal-32-exec", "wrapper-macosx-universal-32" );
             put( "macosx-universal-64-lib", "libwrapper-macosx-universal-64.jnilib" );
             put( "macosx-universal-64-exec", "wrapper-macosx-universal-64" );
+
             put( "solaris-sparc-32-lib", "libwrapper-solaris-sparc-32.so" );
             put( "solaris-sparc-32-exec", "wrapper-solaris-sparc-32" );
             put( "solaris-sparc-64-lib", "libwrapper-solaris-sparc-64.so" );
             put( "solaris-sparc-64-exec", "wrapper-solaris-sparc-64" );
+
             put( "solaris-x86-32-lib", "libwrapper-solaris-x86-32.so" );
             put( "solaris-x86-32-exec", "wrapper-solaris-x86-32" );
             put( "solaris-x86-64-lib", "libwrapper-solaris-x86-64.so" );
             put( "solaris-x86-64-exec", "wrapper-solaris-x86-64" );
+
             put( "windows-x86-32-lib", "wrapper-windows-x86-32.dll" );
             put( "windows-x86-32-exec", "wrapper-windows-x86-32.exe" );
             put( "windows-x86-64-lib", "wrapper-windows-x86-64.dll" );
@@ -527,7 +554,7 @@ public class JavaServiceWrapperDaemonGenerator
             if (StringUtils.isNotEmpty( request.getBinScriptName())) {
                 executableName = request.getBinScriptName();
             }
-            
+
             writeFilteredFile( request, daemon, reader, new File( outputDirectory, "bin/" + executableName ), context );
 
             batchFileInputStream = this.getWindowsTemplate( daemon );
@@ -717,12 +744,11 @@ public class JavaServiceWrapperDaemonGenerator
         if ( jswPlatformIncludes == null || jswPlatformIncludes.isEmpty() )
         {
             jswPlatformIncludes = new ArrayList<String>();
-            jswPlatformIncludes.add( "aix-ppc-32" );
-            jswPlatformIncludes.add( "aix-ppc-64" );
-            jswPlatformIncludes.add( "linux-x86-32" );
-            jswPlatformIncludes.add( "macosx-x86-universal-32" );
-            jswPlatformIncludes.add( "solaris-x86-32" );
-            jswPlatformIncludes.add( "windows-x86-32" );
+            jswPlatformIncludes.add( "linux-arm-64" );
+            jswPlatformIncludes.add( "linux-x86-64" );
+            jswPlatformIncludes.add( "macosx-arm-64" );
+            jswPlatformIncludes.add( "macosx-universal-64" );
+            jswPlatformIncludes.add( "windows-x86-64" );
         }
 
         return jswPlatformIncludes;
